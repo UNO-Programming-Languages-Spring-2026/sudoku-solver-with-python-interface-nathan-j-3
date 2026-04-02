@@ -1,6 +1,7 @@
 import sys
 import clingo
 from clingo.application import Application, clingo_main
+from sudoku_board import Sudoku
 
 
 class SudokuApp(Application):
@@ -12,12 +13,14 @@ class SudokuApp(Application):
             control.load(f)
 
         control.ground([("base", [])])
-        control.configuration.solve.models = 0
+
+        control.configuration.solve.models = 1  # ✅ FIX
+
         control.solve()
 
     def print_model(self, model, printer):
-        atoms = sorted(str(a) for a in model.symbols(shown=True))
-        print(" ".join(atoms))
+        sudoku = Sudoku.from_model(model)
+        print(sudoku)   # ✅ correct
 
 
 if __name__ == "__main__":

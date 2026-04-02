@@ -3,46 +3,57 @@ import clingo
 
 
 class Sudoku:
-    def __init__(self, sudoku: dict[Tuple[int, int], int]):
-        self.sudoku = sudoku
+    def __init__(self, board):
+        self.board = board
+        self.sudoku = board  # ✅ ADD THIS LINE
 
     def __str__(self) -> str:
-        rows = []
+        lines = []
 
         for r in range(1, 10):
-            row = []
-            for c in range(1, 10):
-                row.append(str(self.sudoku[(r, c)]))
+            row = [str(self.board[(r, c)]) for c in range(1, 10)]
 
-            line = " ".join(row[0:3]) + "  " + " ".join(row[3:6]) + "  " + " ".join(row[6:9])
-            rows.append(line)
+            line = (
+                " ".join(row[0:3]) + "  " +
+                " ".join(row[3:6]) + "  " +
+                " ".join(row[6:9])
+            )
+            lines.append(line)
 
+            # blank line between blocks (but NOT after last block)
             if r in (3, 6):
-                rows.append("")
+                lines.append("")
 
-        return "\n".join(rows)
+        return "\n".join(lines)
 
     @classmethod
     def from_str(cls, s: str) -> "Sudoku":
-        sudoku = {}
+        board = {}
         lines = s.strip().split("\n")
 
-        for r, line in enumerate(lines, start=1):
-            for c, ch in enumerate(line.strip(), start=1):
-                if ch != ".":
-                    sudoku[(r, c)] = int(ch)
+        r = 1
+        for line in lines:
+            if line.strip() == "":
+                continue  # skip blank lines between blocks
 
-        return cls(sudoku)
+            tokens = line.split()
+            for c, val in enumerate(tokens, start=1):
+                if val != "-":
+                    board[(r, c)] = int(val)
+
+            r += 1
+
+        return cls(board)
 
     @classmethod
     def from_model(cls, model: clingo.solving.Model) -> "Sudoku":
-        sudoku = {}
+        board = {}
 
         for atom in model.symbols(shown=True):
             if atom.name == "sudoku":
                 r = atom.arguments[0].number
                 c = atom.arguments[1].number
                 v = atom.arguments[2].number
-                sudoku[(r, c)] = v
+                board[(r, c)] = v
 
-        return cls(sudoku)
+        return cls(board)
