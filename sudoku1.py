@@ -6,17 +6,17 @@ from clingo.application import Application, clingo_main
 class SudokuApp(Application):
 
     def main(self, control, files):
-
-        # load sudoku encoding
         control.load("sudoku.lp")
 
-        # load input instances
         for f in files:
             control.load(f)
 
         control.ground([("base", [])])
-
         control.solve()
+
+    def print_model(self, model, printer):
+        atoms = sorted(str(a) for a in model.symbols(shown=True))
+        print(" ".join(atoms))
 
 
 if __name__ == "__main__":
