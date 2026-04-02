@@ -14,13 +14,13 @@ class SudokuApp(Application):
 
         control.ground([("base", [])])
 
-        control.configuration.solve.models = 1  # ✅ FIX
+        control.configuration.solve.models = 1
 
         control.solve()
 
     def print_model(self, model, printer):
         sudoku = Sudoku.from_model(model)
-        print(sudoku)   # ✅ correct
+        print(sudoku)
 
 
 if __name__ == "__main__":

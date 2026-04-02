@@ -5,7 +5,7 @@ import clingo
 class Sudoku:
     def __init__(self, board):
         self.board = board
-        self.sudoku = board  # ✅ ADD THIS LINE
+        self.sudoku = board
 
     def __str__(self) -> str:
         lines = []
